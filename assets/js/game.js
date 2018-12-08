@@ -4,6 +4,8 @@
  ********************************************************************************** */
 // Use strict to keep things sane and not crapp code
 "use strict";
+
+// useStrict();
 /*global $:false, jQuery:false */
 /*global document:false */
 /*global console:false */
@@ -131,7 +133,7 @@ $(document).ready(function () {
     function askAQuestion() {
         displayNextQuestion();
         displayAnswerChoices();
-        // myTimer = setTimeout(didntAnswerOnTime, timeoutTime);
+        myTimer = setTimeout(didntAnswerOnTime, timeoutTime);
     }
 
     /****************************************************************************************
