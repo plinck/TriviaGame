@@ -3,35 +3,30 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Star Wars</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-        crossorigin="anonymous">
+    <title>Trivia Game</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
 
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/style.css" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script type="text/javascript" src="assets/js/Character.js"></script>
-    <script type="text/javascript" src="assets/js/StarWarsGame.js"></script>
 
 </head>
 
 <body>
 
-    <h3>Press t for True and f for False to answer the question</h3>
-    <p id="question"></p>
+    <h3>Trivia</h3>
+    <p><span id="timeRemaining"></span></p>
+    <p id="currentQuestion" class="text-primary"></p>
     <br>
-    <!-- <input id="textInputAnswer" type="text" onkeyup="waitForInputField()"> -->
+    <div id="possibleAnswers" class="text-primary">
+        <!-- buttons with answers -->
+    </div>
     <hr>
-    <p>Your last question: <span id="lastQuestion"></span></p>
-    <p>Correct answer: <span id="correctAnswer"></span></p>
-    <p>Your answer: <span id="answer"></span></p>
-    <p>Your result: <span id="result"></span></p>
-
-    <script>
-    </script>
-
+    <p>Your last question: <span id="lastQuestion" class="text-primary"></span></p>
+    <p>Correct answer: <span id="lastCorrectAnswer" class="text-primary"></span></p>
+    <p>Your answer: <span id="lastAnswer" class="text-primary"></span></p>
+    <p>Your result: <span id="lastResult" class="text-primary"></span></p>
 
     <script type="text/javascript" src="assets/js/game.js"></script>
 

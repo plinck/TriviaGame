@@ -13,3 +13,15 @@ body {
     margin: 0;
     padding: 0;
 }
+
+.text-primary {
+    color: white;
+}
+
+.answer-btn {
+    display: block;
+    margin: 2px;
+    width: 100%;
+    color: white;
+    background-color: blue;
+}

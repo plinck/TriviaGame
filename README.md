@@ -1,37 +1,17 @@
-# Star Wars RPG Game
+# Trivia Game with timed questions
 
-## Overview
+### Overview
 
-Star Wars is a battle game.  The user first chooses the character they wish to be by clicking on the character's picture. The player will fight as that player for the whole game.  The player then fights each of the remaining characters (the enemies) one at a time.  He chooses the enemy to fight next by clicking their picture.  The character that the player is figthing against is in the `defender_ area` of the page.  
+This is a Trivia game using JavaScript for the logic and jQuery to manipulate HTML. Be sure to layout this app with valid HTML and stylish CSS. This game shows only one question until the player answers it or their time runs out.
 
-Once the match is started, you click the `attack` button.  Whenever you click attack, it causes damage to the enemy by decreasing their `HP` - health points.  An enemies `HP` is displayed beloew their image.  As soon as you hit attack, the enemy attacks back.  Each time the enemy attacks you, you lose some of your `HP`.  You points are shown beneath your character's picture.
+* If the player selects the correct answer, it shows a screen congratulating them for choosing the right option. After a few seconds, display the next question -- without user input.
 
-You continue to hit attack until their `HP` goes to zero or below - or your `HP` goes to zero or below.  If their `HP` goes to zero or below, you win.  That enemy is removed from defender area and you pick the next enemuy to fight and do the same thing until you or all opponents are defeated.
+* If the player selects the wrong answers and/or time-outs.
 
-* The game restarts whenever the player wins or loses the whole game (i.e. a set of enemies).
-* I also keep track of the number of games played and wins and losses.
+  * If the player runs out of time, tell the player that time's up and display the correct answer. Wait a few seconds, then show the next question.
+  * If the player chooses the wrong answer, tell the player they selected the wrong option and then display the correct answer. Wait a few seconds, then show the next question.
 
-- - -
-
-### Design Notes
-
-* Each character in the game has 3 attributes: `Health Points`, `Attack Power` and `Counter Attack Power`.
-
-* Each time the player attacks, their character's Attack Power increases by its `Base Attack Power`.
-  * For example, if the `Base Attack Power` is 6, each attack will increase the Attack Power by 6 (12, 18, 24, 30 and so on).
-* The enemy character only has `Counter Attack Power`. 
-
-  * Unlike the player's `Attack Points`, `Counter Attack Power` never changes.
-
-* The `Health Points`, `Attack Power` and `Counter Attack Power` of each character must differ.
-
-* No characters in the game can heal or recover Health Points.
-
-### Strategy Notes
-
-* A winning player must pick their characters wisely by first fighting an enemy with low `Counter Attack Power`. This will allow them to gain `Attack Power` and to take on enemies before they lose all of their `Health Points`.
-
-* Your players should be able to win and lose the game no matter what character they choose. The challenge should come from picking the right enemies, not choosing the strongest player.
+* On the final screen, show the number of correct answers, incorrect answers, and an option to restart the game (without reloading the page).
 
 - - -
 
@@ -46,11 +26,7 @@ I added a portfolio item to both my responsive and bootstrap portfolio.  Both of
 
 ## Bugs and known issues
 
-* Add feedback when button press - audio and possibly image
-* Make the attack button appear only if player and enemy are defined
-* Need to refactor code and put stuff in correct classes
-* Clean up design
-* Dealing with images - I want the **whole card** to be max size smaller and the image to fill its spaee but I cant get it to look right
+* Just started / wireframe
 * ASK INSTRUCTORs - Why does the main (game.js) program have to be at end of body of html page vs in <head> tag
 
 - - -
