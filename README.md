@@ -1,8 +1,8 @@
 # Trivia Game with timed questions
 
-### Overview
+## Overview
 
-This is a Trivia game using JavaScript for the logic and jQuery to manipulate HTML. This game shows only one question until the player answers it or their time runs out.
+This is a Trivia game using JavaScript for the logic and jQuery to manipulate HTML. This game shows only one question until the player answers it or their time runs out.  It is responsive using media queries to work on smaller screens.
 
 * If the player selects the correct answer, it shows a screen congratulating them for choosing the right option. After a few seconds, display the next question -- without user input.
 
@@ -24,16 +24,15 @@ I added a portfolio item to both my responsive and bootstrap portfolio.  Both of
 
 - - -
 
-## Bugs and known issues
+## Bugs, known issues and TODOs
 
-  * Got logic worked out but needs lots of work
-  * Decent icon
-  * non-sucky design
-  * refactor at least a little since its nasty code
-  * put in objects and classes
-  * use string interpolation ES6
-  * Put questions on JSON Database file
-  * 
+* Make it look better - Colors and Design
+* Put questions on JSON Database file
+* Add to Responsive and BootStrap Portfolio
+* Refactor a little but I am not gonna waste my time putting in classes since it is so simple
+* Use ES6 string interpolation
+* Fix VSCode use strict mode
+  
 * ASK INSTRUCTORs - Why does the main (game.js) program have to be at end of body of html page vs in <head> tag
 
 - - -

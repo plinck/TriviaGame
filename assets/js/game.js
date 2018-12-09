@@ -12,6 +12,7 @@
 $(document).ready(function () {
 
     // HTML Elements for display
+    // ====================================================
     let timeRemaining = $("#timeRemaining");
     let nextQuestionIn = $("#nextQuestionIn");
 
@@ -23,6 +24,8 @@ $(document).ready(function () {
     let lastAnswer = $("#lastAnswer");
     let lastResult = $("#lastResult");
 
+    // Timers and counters
+    // ====================================================
     const nextQuestionTimeoutTime = 2000; // Amount of time to display next question
     let nextQuestionTimeoutTimer; // imer variable to allow cancelling timer
     let nextQuestionCountdown; // Countdown to next Question
@@ -31,11 +34,13 @@ $(document).ready(function () {
     let answerIntervalTimer; // answerIntervalTimer variable to allow cancelling timer
     let answerCountdown; // to show how much left
 
+    // Game tracking
+    // ====================================================
     let totalScore = 0; // Total correct answers for the user
+    let currentQuestionIdx; // the index of question being asking
 
-    // Set current question undefined so we know to *start* at the first question (item[0])
-    let currentQuestionIdx;
-
+    // Array of Questio Objects - move this to JSON File
+    // ====================================================
     let myQuestions = [{
             question: "Who was the 41st President?",
             answers: ["George W Bush", "Bill Clinton", "George HW Bush", "Gerald Ford"],
@@ -61,66 +66,21 @@ $(document).ready(function () {
         currentQuestion.html(myQuestions[currentQuestionIdx].question);
     }
 
+    // display the answer choices for the current question
     function displayAnswerChoices() {
         possibleAnswers.empty();
 
         for (var i in myQuestions[currentQuestionIdx].answers) {
-            var btnChoice = $('<button class="answer-btn" data-value="' + i + '">' + myQuestions[currentQuestionIdx].answers[i] + '</button>');
+            var btnChoice = $('<div class="answer-btn" data-value="' + i + '">' + myQuestions[currentQuestionIdx].answers[i] + '</div>');
             possibleAnswers.append(btnChoice);
         }
-    }
-
-    // After answer is given, check to see if user was correct
-    function checkAnswer(answer) {
-        // Wait for Answer
-        if (answer == myQuestions[currentQuestionIdx].correctAnswer) {
-            lastResult.html("Correct!");
-            alert("Correct!");
-            totalScore += 1;
-        } else {
-            lastResult.html("Wrong!");
-            alert("Wrong!");
-        }
-
-        let correctAnswerIdx = myQuestions[currentQuestionIdx].correctAnswer;
-
-        lastQuestion.html(myQuestions[currentQuestionIdx].question);
-        lastCorrectAnswer.html(myQuestions[currentQuestionIdx].answers[correctAnswerIdx]);
-        lastAnswer.html(myQuestions[currentQuestionIdx].answers[answer]);
-    }
-
-    function decrementAnswerCountown() {
-
-        answerCountdown -= 1;
-
-        $("#timeRemaining").html(answerCountdown);
-
-        if (answerCountdown <= 0) {
-            clearInterval(answerIntervalTimer);
-            didntAnswerOnTime();
-        }
-    }
-
-    // If they dont answer within the timer, they get it wrong by default
-    // Send results to display and go to next question
-    function didntAnswerOnTime() {
-
-        alert("ran out of time, sorry, you lose");
-
-        let correctAnswerIdx = myQuestions[currentQuestionIdx].correctAnswer;
-        lastQuestion.html(myQuestions[currentQuestionIdx].question);
-        lastCorrectAnswer.html(myQuestions[currentQuestionIdx].answers[correctAnswerIdx]);
-        lastAnswer.html("No Answer - timeout");
-        lastResult.html("Wrong!");
-
-        setupNextQuestion();
     }
 
     // get next question ready to display in a certain amount of time
     function setupNextQuestion() {
         // Clear the previous question
         currentQuestion.empty();
-        possibleAnswers.empty();
+        possibleAnswers.html("Waiting for next question ...");
 
         // The end
         console.log("currentQuestionIdx", currentQuestionIdx);
@@ -135,6 +95,56 @@ $(document).ready(function () {
         }
     }
 
+    // This displays how many seconds are left to answer the current question
+    function decrementAnswerCountown() {
+
+        answerCountdown -= 1;
+
+        $("#timeRemaining").html(answerCountdown);
+
+        if (answerCountdown <= 0) {
+            clearInterval(answerIntervalTimer);
+            didntAnswerOnTime();
+        }
+    }
+
+    // After answer is given, check to see if user was correct
+    function checkAnswer(answer) {
+        // Wait for Answer
+        if (answer == myQuestions[currentQuestionIdx].correctAnswer) {
+            displayLastResult(lastAnswer.html(myQuestions[currentQuestionIdx].answers[answer]), "Correct!");
+            alert("Correct!");
+            totalScore += 1;
+        } else {
+            displayLastResult(lastAnswer.html(myQuestions[currentQuestionIdx].answers[answer]), "Wrong!");
+            alert("Wrong!");
+        }
+
+        // Queue Up Next Question
+        setupNextQuestion();
+    }
+
+    // If they dont answer within the timer, they get it wrong by default
+    // Send results to display and go to next question
+    function didntAnswerOnTime() {
+
+        displayLastResult("No Answer - timeout", "Wrong!");
+        alert("Ran out of time, sorry, you lose");
+
+        // Queue Up Next Question
+        setupNextQuestion();
+    }
+
+    // Display the previous question, asnwer and result
+    function displayLastResult(lastAnswerText, lastResultText) {
+        let correctAnswerIdx = myQuestions[currentQuestionIdx].correctAnswer;
+
+        lastQuestion.html(myQuestions[currentQuestionIdx].question);
+        lastCorrectAnswer.html(myQuestions[currentQuestionIdx].answers[correctAnswerIdx]);
+        lastAnswer.html(lastAnswerText);
+        lastResult.html(lastResultText);
+    }
+
     // End the game - display totals
     function endCurrentGame(totalScore, nbr) {
         clearTimeout(nextQuestionTimeoutTimer);
@@ -142,32 +152,17 @@ $(document).ready(function () {
         if (confirm("Game Over - you answered " + totalScore + " correctly, out of " + nbr + " total.  Would you like to play again?")) {
             newGame();
         } else {
-            // Do nothing!
+            possibleAnswers.html("Game over.  You answerd " + totalScore + " correctly, out of " + nbr + " total.");
         }
     }
 
+    // If the user wants to, start a new game
     function newGame() {
         totalScore = 0; // Total correct answers for the game
         // Set current question undefined so we know to *start* at the first question (item[0])
         currentQuestionIdx = undefined;
         askAQuestion();
     }
-
-    // must chain to parent to get all even on reset
-    $("#possibleAnswers").on("click", ".answer-btn", function () {
-        // get value
-        let currentAnswerIdx = $(this).attr("data-value");
-
-        // clear timer since thet did answer - need to start new timer
-        // when you ask the next question
-        clearInterval(answerIntervalTimer);
-
-        // Check to see if the user answered correctly
-        checkAnswer(currentAnswerIdx);
-
-        // Queue Up Next Question
-        setupNextQuestion();
-    });
 
     // Aak the next question and set a timer so the must answer in a certain amount of time
     // If they dont answer within the timer, they get it wrong by default
@@ -184,15 +179,24 @@ $(document).ready(function () {
 
     /****************************************************************************************
      * MAIN
-     * The whole tyhing starts by displaying a question.  Then, we just sit there and wait
-     * until the user gives an answer of t or f.  Afgter that, lwe go to next question.
-     * Adding a timeout for each question would be a nice addition
-     * I have two alternative method for doing this.
-     * 1) Use text input field tyo get user input
-     * 2) Use onkeyup global event to get user input
-     * The rest of the code is the same but these two alternatives control the flow
+     * The whole thing starts by displaying a question.  Then, we just sit there and wait
+     * until the user gives an answer or it times out.  After that, lwe go to next question.
      **************************************************************************************** */
 
     askAQuestion();
+
+    // must chain to parent to get all even on reset
+    $("#possibleAnswers").on("click", ".answer-btn", function () {
+        // get value
+        let currentAnswerIdx = $(this).attr("data-value");
+
+        // clear timer since thet did answer - need to start new timer
+        // when you ask the next question
+        clearInterval(answerIntervalTimer);
+
+        // Check to see if the user answered correctly
+        checkAnswer(currentAnswerIdx);
+    });
+
 
 });

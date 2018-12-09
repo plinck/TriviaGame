@@ -14,22 +14,50 @@
 </head>
 
 <body>
+    <header>
+        <div>
+            <img class="imageNav" src="assets/images/275x200TriviaGame.png" , width="75px" , height="75px">
+        </div>
+        <div>
+            <h2>Trivia</h2>
+        </div>
+    </header>
 
-    <h3 class="text-primary">Trivia</h3>
-    <!-- <p class="text-primary">Next Question in: <span id="nextQuestionIn"></span> seconds</p> -->
-    <p class="text-primary">Time Remaining: <span id="timeRemaining"></span></p>
-    <p id="currentQuestion" class="text-primary"></p>
-    <br>
-    <div id="possibleAnswers" class="text-primary">
-        <!-- buttons with answers -->
-    </div>
-    <hr>
-    <p class="text-primary">Your last question: <span id="lastQuestion" class="text-primary"></span></p>
-    <p class="text-primary">Correct answer: <span id="lastCorrectAnswer" class="text-primary"></span></p>
-    <p class="text-primary">Your answer: <span id="lastAnswer" class="text-primary"></span></p>
-    <p class="text-primary">Your result: <span id="lastResult" class="text-primary"></span></p>
+    <!-- Main Section -->
+    <main class="main-container">
+        <!-- Main Question with Answers -->
+        <section class="question-info">
+            <div class="section-header">
+                <!-- <p class="text-primary">Next Question in: <span id="nextQuestionIn"></span> seconds</p> -->
+                <p>Time Remaining: <span id="timeRemaining"></span></p>
+            </div>
+            <div class="section-body">
+                <p id="currentQuestion"></p>
+                <br>
+                <div id="possibleAnswers">
+                    <!-- buttons with answers -->
+                </div>
+            </div>
+        </section>
 
-    <script type="text/javascript" src="assets/js/game.js"></script>
+        <section class="last-question-info">
+            <div class="section-header">
+                <!-- <p class="text-primary">Next Question in: <span id="nextQuestionIn"></span> seconds</p> -->
+                <p>Last Question Info</p>
+            </div>
+
+            <div class="section-body">
+                <p>Your last question: <span id="lastQuestion"></span></p>
+                <p>Correct answer: <span id="lastCorrectAnswer"></span></p>
+                <p>Your answer: <span id="lastAnswer"></span></p>
+                <p>Your result: <span id="lastResult"></span></p>
+            </div>
+        </section>
+
+    </main>
+
+    <script type="text/javascript" src="assets/js/game.js">
+    </script>
 
 </body>
 
