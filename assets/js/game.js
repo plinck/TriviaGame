@@ -24,6 +24,9 @@ $(document).ready(function () {
     let lastAnswer = $("#lastAnswer");
     let lastResult = $("#lastResult");
 
+    let totalCorrectAnswers = $("totalCorrectAnswers");
+    let totalIncorrectAnswers = $("totalIncorrectAnswers");
+
     // Timers and counters
     // ====================================================
     const nextQuestionTimeoutTime = 2000; // Amount of time to display next question
@@ -36,7 +39,8 @@ $(document).ready(function () {
 
     // Game tracking
     // ====================================================
-    let totalScore = 0; // Total correct answers for the user
+    let totalCorrectScore = 0; // Total correct answers for the user
+    let totalIncorrectScore = 0; // Total correct answers for the user
     let currentQuestionIdx; // the index of question being asking
 
     // Array of Questio Objects - move this to JSON File
@@ -86,7 +90,7 @@ $(document).ready(function () {
         console.log("currentQuestionIdx", currentQuestionIdx);
 
         if (currentQuestionIdx >= (myQuestions.length - 1)) {
-            endCurrentGame(totalScore, myQuestions.length);
+            endCurrentGame(totalCorrectScore, totalIncorrectScore);
         } else { // continue game
             // clear the timeout
             clearTimeout(nextQuestionTimeoutTimer);
@@ -114,10 +118,11 @@ $(document).ready(function () {
         if (answer == myQuestions[currentQuestionIdx].correctAnswer) {
             displayLastResult(lastAnswer.html(myQuestions[currentQuestionIdx].answers[answer]), "Correct!");
             alert("Correct!");
-            totalScore += 1;
+            totalCorrectScore += 1;
         } else {
             displayLastResult(lastAnswer.html(myQuestions[currentQuestionIdx].answers[answer]), "Wrong!");
             alert("Wrong!");
+            totalIncorrectScore += 1;
         }
 
         // Queue Up Next Question
@@ -143,22 +148,29 @@ $(document).ready(function () {
         lastCorrectAnswer.html(myQuestions[currentQuestionIdx].answers[correctAnswerIdx]);
         lastAnswer.html(lastAnswerText);
         lastResult.html(lastResultText);
+
+        totalCorrectAnswers.html(totalCorrectScore);
+        totalIncorrectAnswers.html(totalIncorrectScore);
     }
 
     // End the game - display totals
-    function endCurrentGame(totalScore, nbr) {
+    function endCurrentGame(correct, incorrect) {
         clearTimeout(nextQuestionTimeoutTimer);
 
-        if (confirm("Game Over - you answered " + totalScore + " correctly, out of " + nbr + " total.  Would you like to play again?")) {
+        let total = correct + incorrect;
+        let messageResults = "Game Over. You answered " + correct + " correctly, " + incorrect + " incorrectly, out of " + total + " total.";
+
+        if (confirm(messageResults + " Would you like to play again?")) {
             newGame();
         } else {
-            possibleAnswers.html("Game over.  You answerd " + totalScore + " correctly, out of " + nbr + " total.");
+            possibleAnswers.html(messageResults);
         }
     }
 
     // If the user wants to, start a new game
     function newGame() {
-        totalScore = 0; // Total correct answers for the game
+        totalCorrectScore = 0; // Total correct answers for the game
+        totalIncorrectScore = 0; // Total correct answers for the game
         // Set current question undefined so we know to *start* at the first question (item[0])
         currentQuestionIdx = undefined;
         askAQuestion();
