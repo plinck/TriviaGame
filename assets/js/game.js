@@ -50,12 +50,6 @@ $(document).ready(function () {
             answers: ["George W Bush", "Bill Clinton", "George HW Bush", "Gerald Ford"],
             correctAnswer: 2,
             correctImage: ""
-        },
-        {
-            question: "Who was the 42nd President?",
-            answers: ["Bill Clinton", "George HW Bush", "Gerald Ford", "George W Bush"],
-            correctAnswer: 0,
-            correctImage: ""
         }
     ];
 
@@ -190,11 +184,53 @@ $(document).ready(function () {
         answerIntervalTimer = setInterval(decrementAnswerCountown, answerTimeoutTime);
     }
 
+    // Helper HTTP Function
+    // ===================================================================================================
+    var HttpClient = function () {
+        this.get = function (aUrl, aCallback) {
+            var anHttpRequest = new XMLHttpRequest();
+            anHttpRequest.onreadystatechange = function () {
+                if (anHttpRequest.readyState == 4 && anHttpRequest.status == 200)
+                    aCallback(anHttpRequest.responseText);
+            };
+
+            anHttpRequest.open("GET", aUrl, true);
+            anHttpRequest.send(null);
+        };
+    };
+
+    // Read from JSON file and convert to list of questions since format is not exactly what I need
+    // for exmaple, the possible answers need to include the correct and incorrect answers
+    // this step can be eliminated later by changing the code inside slightly
+    // ===================================================================================================
+    function setupQuestions() {
+        var client = new HttpClient();
+        let jsonQuestions = {};
+
+        // PUBLIC DOMAIN API TO GET QUESTIONS
+        client.get('https://opentdb.com/api.php?amount=10&category=22&difficulty=medium&type=multiple', function (response) {
+            jsonQuestions = JSON.parse(response);
+            // let myQuestions = [];
+            for (let i in jsonQuestions.results) {
+                let currentQuestion = {};
+                currentQuestion.question = jsonQuestions.results[i].question;
+                currentQuestion.answers = [jsonQuestions.results[i].correct_answer].concat(jsonQuestions.results[i].incorrect_answers);
+
+                let answerIdx = currentQuestion.answers.indexOf(jsonQuestions.results[i].correct_answer);
+                currentQuestion.correctAnswer = answerIdx;
+                currentQuestion.correctImage = "";
+
+                myQuestions[i] = (currentQuestion);
+            }
+        });
+    }
+
     /****************************************************************************************
      * MAIN
      * The whole thing starts by displaying a question.  Then, we just sit there and wait
      * until the user gives an answer or it times out.  After that, lwe go to next question.
      **************************************************************************************** */
+    setupQuestions();
 
     askAQuestion();
 
