@@ -24,8 +24,8 @@ $(document).ready(function () {
     let lastAnswer = $("#lastAnswer");
     let lastResult = $("#lastResult");
 
-    let totalCorrectAnswers = $("totalCorrectAnswers");
-    let totalIncorrectAnswers = $("totalIncorrectAnswers");
+    let totalCorrectAnswers = $("#totalCorrectAnswers");
+    let totalIncorrectAnswers = $("#totalIncorrectAnswers");
 
     // Timers and counters
     // ====================================================
@@ -75,7 +75,7 @@ $(document).ready(function () {
         possibleAnswers.empty();
 
         for (var i in myQuestions[currentQuestionIdx].answers) {
-            var btnChoice = $('<div class="answer-btn" data-value="' + i + '">' + myQuestions[currentQuestionIdx].answers[i] + '</div>');
+            var btnChoice = $(`<div class="answer-btn" data-value=${i}>${myQuestions[currentQuestionIdx].answers[i]}</div>`);
             possibleAnswers.append(btnChoice);
         }
     }
@@ -116,13 +116,13 @@ $(document).ready(function () {
     function checkAnswer(answer) {
         // Wait for Answer
         if (answer == myQuestions[currentQuestionIdx].correctAnswer) {
-            displayLastResult(lastAnswer.html(myQuestions[currentQuestionIdx].answers[answer]), "Correct!");
-            alert("Correct!");
             totalCorrectScore += 1;
+            displayLastResult(myQuestions[currentQuestionIdx].answers[answer], "Correct!");
+            alert("Correct!");
         } else {
-            displayLastResult(lastAnswer.html(myQuestions[currentQuestionIdx].answers[answer]), "Wrong!");
-            alert("Wrong!");
             totalIncorrectScore += 1;
+            displayLastResult(myQuestions[currentQuestionIdx].answers[answer], "Wrong!");
+            alert("Wrong!");
         }
 
         // Queue Up Next Question
@@ -132,6 +132,7 @@ $(document).ready(function () {
     // If they dont answer within the timer, they get it wrong by default
     // Send results to display and go to next question
     function didntAnswerOnTime() {
+        totalIncorrectScore += 1;
 
         displayLastResult("No Answer - timeout", "Wrong!");
         alert("Ran out of time, sorry, you lose");
@@ -158,9 +159,9 @@ $(document).ready(function () {
         clearTimeout(nextQuestionTimeoutTimer);
 
         let total = correct + incorrect;
-        let messageResults = "Game Over. You answered " + correct + " correctly, " + incorrect + " incorrectly, out of " + total + " total.";
+        let messageResults = `Game Over. Corrent Answers: ${correct}. Incorrect: ${correct}.  Total: ${total}`;
 
-        if (confirm(messageResults + " Would you like to play again?")) {
+        if (confirm(`${messageResults} -- would you like to play again?`)) {
             newGame();
         } else {
             possibleAnswers.html(messageResults);

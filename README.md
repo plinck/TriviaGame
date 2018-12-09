@@ -28,7 +28,6 @@ I added a portfolio item to both my responsive and bootstrap portfolio.  Both of
 
 * Make it look better - Colors and Design
 * Put questions on JSON Database file
-* Add to Responsive and BootStrap Portfolio
 * Refactor a little but I am not gonna waste my time putting in classes since it is so simple
 * Use ES6 string interpolation
 * Fix VSCode use strict mode
