@@ -92,7 +92,7 @@ section {
     text-align: center;
 }
 
-@media screen and (max-width: 750px) {
+@media screen and (max-width: 768px) {
     .main-container {
         margin: 2px;
         flex-direction: column;

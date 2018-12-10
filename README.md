@@ -26,9 +26,9 @@ I added a portfolio item to both my responsive and bootstrap portfolio.  Both of
 
 ## Bugs, known issues and TODOs
 
-* Make it look better - Colors and Design
+* Make it look a little better - Colors and Design
 * Test on mobile phone - 640px may not be right to switch to columns
+* pesky little &#39; issue.  Works on test JSON but not on JSON retrieved from Web.  Odd.  I know its a unicode thing but trying to find simple way to fix.
 * Refactor a little but I am not gonna waste my time putting in classes since it is so simple
-* Fix VSCode use strict mode
   
 - - -

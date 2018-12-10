@@ -46,12 +46,12 @@ $(document).ready(function () {
     // Array of Questio Objects - move this to JSON File
     // ====================================================
     let myQuestions = [];
-    // let myQuestions = [{
-    //     question: "Who was the 41st President?",
-    //     answers: ["George W Bush", "Bill Clinton", "George HW Bush", "Gerald Ford"],
-    //     correctAnswer: "George HW Bush",
-    //     correctImage: ""
-    // }];
+    let customQuestion = {
+        question: "loops?",
+        answers: ["&#39;For&#39; loops", "Bill Clinton", "George HW Bush", "Gerald Ford"],
+        correctAnswer: "&#39;For&#39; loops",
+        correctImage: ""
+    };
 
     // Go to the next question in the list - wrap around if no more
     function displayNextQuestion() {
@@ -122,8 +122,12 @@ $(document).ready(function () {
 
     // After answer is given, check to see if user was correct
     function checkAnswer(answer) {
-        // Wait for Answer
-        if (answer == myQuestions[currentQuestionIdx].correctAnswer) {
+        let convertedCorrectAnswer = myQuestions[currentQuestionIdx].correctAnswer;
+        convertedCorrectAnswer = convertedCorrectAnswer.replace(/&#39;/g, " "); // So strings can properly compare with funky characters
+
+        let convertedAnswer = answer.replace(/'/g, " ");
+
+        if (convertedAnswer === convertedCorrectAnswer) {
             totalCorrectScore += 1;
             displayLastResult(answer, "Correct!");
             alert("Correct!");
@@ -166,12 +170,13 @@ $(document).ready(function () {
         clearTimeout(nextQuestionTimeoutTimer);
 
         let total = correct + incorrect;
-        let messageResults = `Game Over. Corrent Answers: ${correct}. Incorrect: ${incorrect}.  Total: ${total}`;
+        let messageResults = `Game Over. Correct Answers: ${correct}. Incorrect: ${incorrect}.  Total: ${total}`;
 
         if (confirm(`${messageResults} -- would you like to play again?`)) {
             newGame();
         } else {
-            possibleAnswers.html(messageResults);
+            currentQuestion.html(messageResults);
+            possibleAnswers.empty();
         }
     }
 
@@ -212,7 +217,7 @@ $(document).ready(function () {
         };
     };
 
-    // Read from JSON file and convert to list of questions since format is not exactly what I need
+    // Read from JSON URL and convert to list of questions since format is not exactly what I want
     // for exmaple, the possible answers need to include the correct and incorrect answers
     // this step can be eliminated later by changing the code inside slightly
     // ===================================================================================================
@@ -221,7 +226,7 @@ $(document).ready(function () {
         let jsonQuestions = {};
 
         // PUBLIC DOMAIN API TO GET QUESTIONS
-        client.get('https://opentdb.com/api.php?amount=10&category=22&difficulty=medium&type=multiple', function (response) {
+        client.get('https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple', function (response) {
             jsonQuestions = JSON.parse(response);
             myQuestions.length = 0;
             myQuestions = [];
@@ -237,6 +242,8 @@ $(document).ready(function () {
 
                 myQuestions[i] = currentQuestion;
             }
+            // Add my custom question to front of array
+            //myQuestions.unshift(customQuestion);
 
             // Start game by asking a question - note this is async so dont ask until the response comes back
             askAQuestion();
