@@ -45,13 +45,13 @@ $(document).ready(function () {
 
     // Array of Questio Objects - move this to JSON File
     // ====================================================
-    let myQuestions = [{
-            question: "Who was the 41st President?",
-            answers: ["George W Bush", "Bill Clinton", "George HW Bush", "Gerald Ford"],
-            correctAnswer: 2,
-            correctImage: ""
-        }
-    ];
+    let myQuestions = [];
+    // let myQuestions = [{
+    //     question: "Who was the 41st President?",
+    //     answers: ["George W Bush", "Bill Clinton", "George HW Bush", "Gerald Ford"],
+    //     correctAnswer: "George HW Bush",
+    //     correctImage: ""
+    // }];
 
     // Go to the next question in the list - wrap around if no more
     function displayNextQuestion() {
@@ -69,8 +69,9 @@ $(document).ready(function () {
         possibleAnswers.empty();
 
         for (var i in myQuestions[currentQuestionIdx].answers) {
-            var btnChoice = $(`<div class="answer-btn" data-value=${i}>${myQuestions[currentQuestionIdx].answers[i]}</div>`);
+            var btnChoice = $(`<div class="answer-btn" data-value="${myQuestions[currentQuestionIdx].answers[i]}">${myQuestions[currentQuestionIdx].answers[i]}</div>`);
             possibleAnswers.append(btnChoice);
+            console.log(btnChoice);
         }
     }
 
@@ -111,11 +112,11 @@ $(document).ready(function () {
         // Wait for Answer
         if (answer == myQuestions[currentQuestionIdx].correctAnswer) {
             totalCorrectScore += 1;
-            displayLastResult(myQuestions[currentQuestionIdx].answers[answer], "Correct!");
+            displayLastResult(answer, "Correct!");
             alert("Correct!");
         } else {
             totalIncorrectScore += 1;
-            displayLastResult(myQuestions[currentQuestionIdx].answers[answer], "Wrong!");
+            displayLastResult(answer, "Wrong!");
             alert("Wrong!");
         }
 
@@ -137,10 +138,9 @@ $(document).ready(function () {
 
     // Display the previous question, asnwer and result
     function displayLastResult(lastAnswerText, lastResultText) {
-        let correctAnswerIdx = myQuestions[currentQuestionIdx].correctAnswer;
 
         lastQuestion.html(myQuestions[currentQuestionIdx].question);
-        lastCorrectAnswer.html(myQuestions[currentQuestionIdx].answers[correctAnswerIdx]);
+        lastCorrectAnswer.html(myQuestions[currentQuestionIdx].correctAnswer);
         lastAnswer.html(lastAnswerText);
         lastResult.html(lastResultText);
 
@@ -184,9 +184,9 @@ $(document).ready(function () {
         answerIntervalTimer = setInterval(decrementAnswerCountown, answerTimeoutTime);
     }
 
-    // Helper HTTP Function
+    // Helper HTTP Function for Async calls
     // ===================================================================================================
-    var HttpClient = function () {
+    var HttpClientAsync = function () {
         this.get = function (aUrl, aCallback) {
             var anHttpRequest = new XMLHttpRequest();
             anHttpRequest.onreadystatechange = function () {
@@ -204,48 +204,62 @@ $(document).ready(function () {
     // this step can be eliminated later by changing the code inside slightly
     // ===================================================================================================
     function setupQuestions() {
-        var client = new HttpClient();
+        var client = new HttpClientAsync();
         let jsonQuestions = {};
 
         // PUBLIC DOMAIN API TO GET QUESTIONS
         client.get('https://opentdb.com/api.php?amount=10&category=22&difficulty=medium&type=multiple', function (response) {
             jsonQuestions = JSON.parse(response);
-            // let myQuestions = [];
+            myQuestions.length = 0;
+            myQuestions = [];
             for (let i in jsonQuestions.results) {
-                let currentQuestion = {};
+                myQuestions[i] = {};            // Initiailize array value as empty object
+                let currentQuestion = {};       // convenience temp variable for readability
+
                 currentQuestion.question = jsonQuestions.results[i].question;
                 currentQuestion.answers = [jsonQuestions.results[i].correct_answer].concat(jsonQuestions.results[i].incorrect_answers);
 
-                let answerIdx = currentQuestion.answers.indexOf(jsonQuestions.results[i].correct_answer);
-                currentQuestion.correctAnswer = answerIdx;
+                currentQuestion.correctAnswer = jsonQuestions.results[i].correct_answer;
                 currentQuestion.correctImage = "";
 
-                myQuestions[i] = (currentQuestion);
+                myQuestions[i] = currentQuestion;
             }
+
+            // Start game by asking a question - note this is async so dont ask until the response comes back
+            askAQuestion();
         });
     }
 
     /****************************************************************************************
      * MAIN
-     * The whole thing starts by displaying a question.  Then, we just sit there and wait
-     * until the user gives an answer or it times out.  After that, lwe go to next question.
+     * The whole thing starts by setting up the questions and asking the first one.
+     * Since I am getting the questions from a server, I am doing it async (no-blocking so
+     * I do  ask the first question inside the callback that returns from the server.
+     * That way, the game will only start when that is completed
      **************************************************************************************** */
     setupQuestions();
-
-    askAQuestion();
 
     // must chain to parent to get all even on reset
     $("#possibleAnswers").on("click", ".answer-btn", function () {
         // get value
-        let currentAnswerIdx = $(this).attr("data-value");
+        let currentAnswer = $(this).attr("data-value");
 
         // clear timer since thet did answer - need to start new timer
         // when you ask the next question
         clearInterval(answerIntervalTimer);
 
         // Check to see if the user answered correctly
-        checkAnswer(currentAnswerIdx);
+        checkAnswer(currentAnswer);
     });
+
+    $("#endGameButton").on("click", function () {
+        // clear timer since thet did answer - need to start new timer
+        // when you ask the next question
+        clearInterval(answerIntervalTimer);
+        endCurrentGame(totalCorrectScore, totalIncorrectScore);
+
+    });
+
 
 
 });

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a Trivia game using JavaScript for the logic and jQuery to manipulate HTML. This game shows only one question until the player answers it or their time runs out.  It is responsive using media queries to work on smaller screens.
+This is a Trivia game using JavaScript for the logic and jQuery to manipulate HTML. This game shows only one question until the player answers it or their time runs out.  The questions are retreived from a public URL to keep it fresh [Open Trivia DB](https://opentdb.com).  It is responsive using media queries to work on smaller screens.
 
 * If the player selects the correct answer, it shows a screen congratulating them for choosing the right option. After a few seconds, display the next question -- without user input.
 
@@ -26,14 +26,15 @@ I added a portfolio item to both my responsive and bootstrap portfolio.  Both of
 
 ## Bugs, known issues and TODOs
 
-* Make it look better - Colors and Design
-* Put questions on JSON Database file
-    * Update code that makes array of objects to new blank object to start vs my own question as first
 * Mix up correct answer in choices - i.e. dont just concatinate correct answer to end of incorrect answers
+* Add an END GAME Button so stop the game in case you feel like quitting
+* Make it look better - Colors and Design
+* Get flex columns at larger size - check the iPhone X
+* Increase the font size on smaller screens
+* Put questions on JSON Database file
+  * Update code that makes array of objects to new blank object to start vs my own question as first
 * Refactor a little but I am not gonna waste my time putting in classes since it is so simple
-* Use ES6 string interpolation
 * Fix VSCode use strict mode
   
-* ASK INSTRUCTORs - Why does the main (game.js) program have to be at end of body of html page vs in <head> tag
 
 - - -

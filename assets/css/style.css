@@ -44,6 +44,21 @@ section {
     background-color:rgba(21, 21, 75, 0.50);
     color: #ffffff;
     padding: 4px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.btn {
+    display: block;
+    border: 1px solid yellowgreen;
+    border-radius: 4px;
+    font-size: 1.5em;
+    margin: 6px 0 6px 0;
+    color: blue;
+    background-color: yellowgreen;
+    padding: 6px;
+    text-align: center;
 }
 
 
@@ -78,7 +93,7 @@ section {
     text-align: center;
 }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 750px) {
     .main-container {
         margin: 2px;
         flex-direction: column;
@@ -93,9 +108,19 @@ section {
     .question-info {
         width: 100%;
     }
+
+    #currentQuestion {
+        font-size: 2em;
+    }
+
+    .answer-btn {
+        font-size: 2em;
+    }
+
     
     .last-question-info {
         width: 100%;
+        font-size: 2em;
     }
     
 } 
