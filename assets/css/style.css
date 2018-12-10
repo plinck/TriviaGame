@@ -61,7 +61,6 @@ section {
     text-align: center;
 }
 
-
 .question-info {
     width: 70%;
 }
@@ -113,10 +112,13 @@ section {
         font-size: 2em;
     }
 
-    .answer-btn {
+    #possibleAnswers {
         font-size: 2em;
     }
 
+    .answer-btn {
+        font-size: 2em;
+    }
     
     .last-question-info {
         width: 100%;

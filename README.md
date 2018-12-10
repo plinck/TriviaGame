@@ -26,15 +26,9 @@ I added a portfolio item to both my responsive and bootstrap portfolio.  Both of
 
 ## Bugs, known issues and TODOs
 
-* Mix up correct answer in choices - i.e. dont just concatinate correct answer to end of incorrect answers
-* Add an END GAME Button so stop the game in case you feel like quitting
 * Make it look better - Colors and Design
-* Get flex columns at larger size - check the iPhone X
-* Increase the font size on smaller screens
-* Put questions on JSON Database file
-  * Update code that makes array of objects to new blank object to start vs my own question as first
+* Test on mobile phone - 640px may not be right to switch to columns
 * Refactor a little but I am not gonna waste my time putting in classes since it is so simple
 * Fix VSCode use strict mode
   
-
 - - -

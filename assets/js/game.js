@@ -64,12 +64,25 @@ $(document).ready(function () {
         currentQuestion.html(myQuestions[currentQuestionIdx].question);
     }
 
+    // Helper function to shuffle an array - The answers array has "answer" is always first in the JSON object array
+    function shuffle(arr) {
+        // go from last to first element
+        for (let i = arr.length - 1; i > 0; i--) {
+            const randomIdx = Math.floor(Math.random() * (i + 1));
+
+            // ES6 - Swap the current element with the random element
+            [arr[i], arr[randomIdx]] = [arr[randomIdx], arr[i]];
+        }
+        return arr;
+    }
+
     // display the answer choices for the current question
     function displayAnswerChoices() {
         possibleAnswers.empty();
 
+        let shuffledArray = shuffle(myQuestions[currentQuestionIdx].answers);
         for (var i in myQuestions[currentQuestionIdx].answers) {
-            var btnChoice = $(`<div class="answer-btn" data-value="${myQuestions[currentQuestionIdx].answers[i]}">${myQuestions[currentQuestionIdx].answers[i]}</div>`);
+            var btnChoice = $(`<div class="answer-btn" data-value="${shuffledArray[i]}">${shuffledArray[i]}</div>`);
             possibleAnswers.append(btnChoice);
             console.log(btnChoice);
         }
@@ -153,7 +166,7 @@ $(document).ready(function () {
         clearTimeout(nextQuestionTimeoutTimer);
 
         let total = correct + incorrect;
-        let messageResults = `Game Over. Corrent Answers: ${correct}. Incorrect: ${correct}.  Total: ${total}`;
+        let messageResults = `Game Over. Corrent Answers: ${correct}. Incorrect: ${incorrect}.  Total: ${total}`;
 
         if (confirm(`${messageResults} -- would you like to play again?`)) {
             newGame();
@@ -213,8 +226,8 @@ $(document).ready(function () {
             myQuestions.length = 0;
             myQuestions = [];
             for (let i in jsonQuestions.results) {
-                myQuestions[i] = {};            // Initiailize array value as empty object
-                let currentQuestion = {};       // convenience temp variable for readability
+                myQuestions[i] = {}; // Initiailize array value as empty object
+                let currentQuestion = {}; // convenience temp variable for readability
 
                 currentQuestion.question = jsonQuestions.results[i].question;
                 currentQuestion.answers = [jsonQuestions.results[i].correct_answer].concat(jsonQuestions.results[i].incorrect_answers);
