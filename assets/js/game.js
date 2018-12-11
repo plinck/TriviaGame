@@ -245,7 +245,6 @@ $(document).ready(function () {
     // this step can be eliminated later by changing the code inside slightly but I like it this way
     // ===================================================================================================
     function setupQuestions() {
-        var client = new HttpClientAsync();
         let jsonQuestions = {};
 
         // PUBLIC DOMAIN API TO GET QUESTIONS e.g.:
@@ -253,6 +252,8 @@ $(document).ready(function () {
         // General - https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple
 
         HttpClientAsync('https://opentdb.com/api.php?amount=10&category=18&type=multiple', function (response) {
+
+        if (response == 
 
             jsonQuestions = JSON.parse(response);
             myQuestions.length = 0;
