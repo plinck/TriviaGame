@@ -107,18 +107,6 @@ section {
     .question-info {
         width: 100%;
     }
-
-    #currentQuestion {
-        font-size: 2em;
-    }
-
-    #possibleAnswers {
-        font-size: 2em;
-    }
-
-    .answer-btn {
-        font-size: 2em;
-    }
     
     .last-question-info {
         width: 100%;
