@@ -72,7 +72,27 @@ $(document).ready(function () {
 
             // ES6 - Swap the current element with the random element
             [arr[i], arr[randomIdx]] = [arr[randomIdx], arr[i]];
+
+            // If this is the correct answer, change the index to match where it is being out
+            if (randomIdx == myQuestions[currentQuestionIdx].correctAnswerIdx) {
+                myQuestions[currentQuestionIdx].correctAnswerIdx = i;
+            }
         }
+        return arr;
+    }
+
+    // move the correct answer in the array re-assign the correct answer index
+    // This does not suffle the wole answer array just randomly assigns where the answer appears in the array
+    function moveCorrectAnswer(currentCorrectAnswerIdx, arr) {
+        // Using index so I dont have to compare strings with funky characters
+        const randomAnswerIdx = Math.floor(Math.random() * myQuestions[currentQuestionIdx].answers.length);
+
+        // Swap correct answer into new place
+        [arr[randomAnswerIdx], arr[currentCorrectAnswerIdx]] = [arr[currentCorrectAnswerIdx], arr[randomAnswerIdx]];
+
+        // Assign the corect answer index to the new place it was placed 
+        myQuestions[currentQuestionIdx].correctAnswerIdx = randomAnswerIdx;
+
         return arr;
     }
 
@@ -80,11 +100,11 @@ $(document).ready(function () {
     function displayAnswerChoices() {
         possibleAnswers.empty();
 
-        let shuffledArray = shuffle(myQuestions[currentQuestionIdx].answers);
-        for (var i in myQuestions[currentQuestionIdx].answers) {
-            var btnChoice = $(`<div class="answer-btn" data-value="${shuffledArray[i]}">${shuffledArray[i]}</div>`);
+        // let shuffledArray = shuffle(myQuestions[currentQuestionIdx].answers);
+        let shuffledArray = moveCorrectAnswer(myQuestions[currentQuestionIdx].correctAnswerIdx, myQuestions[currentQuestionIdx].answers);
+        for (var i in shuffledArray) {
+            var btnChoice = $(`<div class="answer-btn" data-value="${i}">${shuffledArray[i]}</div>`);
             possibleAnswers.append(btnChoice);
-            console.log(btnChoice);
         }
     }
 
@@ -122,18 +142,20 @@ $(document).ready(function () {
 
     // After answer is given, check to see if user was correct
     function checkAnswer(answer) {
+        let myAnswerIndex = parseInt(answer, 10);
+        let correctAnswerIndex = myQuestions[currentQuestionIdx].correctAnswerIdx;
+
         let convertedCorrectAnswer = myQuestions[currentQuestionIdx].correctAnswer;
         convertedCorrectAnswer = convertedCorrectAnswer.replace(/&#39;/g, " "); // So strings can properly compare with funky characters
-
         let convertedAnswer = answer.replace(/'/g, " ");
 
-        if (convertedAnswer === convertedCorrectAnswer) {
+        if (myAnswerIndex === correctAnswerIndex) {
             totalCorrectScore += 1;
-            displayLastResult(answer, "Correct!");
+            displayLastResult(myQuestions[currentQuestionIdx].answers[myAnswerIndex], "Correct!");
             alert("Correct!");
         } else {
             totalIncorrectScore += 1;
-            displayLastResult(answer, "Wrong!");
+            displayLastResult(myQuestions[currentQuestionIdx].answers[myAnswerIndex], "Wrong!");
             alert("Wrong!");
         }
 
@@ -226,7 +248,11 @@ $(document).ready(function () {
         let jsonQuestions = {};
 
         // PUBLIC DOMAIN API TO GET QUESTIONS
-        client.get('https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple', function (response) {
+        // Computers - https://opentdb.com/api.php?amount=10&category=18&difficulty=medium&type=multiple
+        // client.get('https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple', function (escaped_response) {
+        client.get('https://opentdb.com/api.php?amount=10&category=18&type=multiple', function (escaped_response) {
+            let response = unescape(escaped_response);
+
             jsonQuestions = JSON.parse(response);
             myQuestions.length = 0;
             myQuestions = [];
@@ -236,8 +262,10 @@ $(document).ready(function () {
 
                 currentQuestion.question = jsonQuestions.results[i].question;
                 currentQuestion.answers = [jsonQuestions.results[i].correct_answer].concat(jsonQuestions.results[i].incorrect_answers);
+                // currentQuestion.answers = jsonQuestions.results[i].incorrect_answers;
 
                 currentQuestion.correctAnswer = jsonQuestions.results[i].correct_answer;
+                currentQuestion.correctAnswerIdx = 0;
                 currentQuestion.correctImage = "";
 
                 myQuestions[i] = currentQuestion;
