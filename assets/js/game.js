@@ -34,7 +34,8 @@ $(document).ready(function () {
     let nextQuestionTimeoutTimer; // imer variable to allow cancelling timer
     let nextQuestionCountdown; // Countdown to next Question
 
-    const answerTimeoutTime = 1000; // Amount of time to make a choice
+    const answerIntervalTimeout = 1000; // Amount of time between each interval in milliseconds (so 1 second)
+    const answerTimeout = 10; // How many intervals before expiring
     let answerIntervalTimer; // answerIntervalTimer variable to allow cancelling timer
     let answerCountdown; // to show how much left
 
@@ -219,11 +220,11 @@ $(document).ready(function () {
         displayNextQuestion();
         displayAnswerChoices();
 
-        answerCountdown = Math.round(answerTimeoutTime / 100); // Number of seconds left
+        answerCountdown = answerTimeout; // Number of intervals to timeout (in this case, in seconds)
 
         timeRemaining.html(answerCountdown);
 
-        answerIntervalTimer = setInterval(decrementAnswerCountown, answerTimeoutTime);
+        answerIntervalTimer = setInterval(decrementAnswerCountown, answerIntervalTimeout);
     }
 
     // Helper HTTP Function for Async calls
