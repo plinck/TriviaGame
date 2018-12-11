@@ -253,8 +253,6 @@ $(document).ready(function () {
 
         HttpClientAsync('https://opentdb.com/api.php?amount=10&category=18&type=multiple', function (response) {
 
-        if (response == 
-
             jsonQuestions = JSON.parse(response);
             myQuestions.length = 0;
             myQuestions = [];
