@@ -240,9 +240,9 @@ $(document).ready(function () {
         anHttpRequest.send(null);
     }
 
-    // Read from JSON URL and convert to list of questions since format is not exactly what I want
-    // for exmaple, the possible answers need to include the correct and incorrect answers
-    // this step can be eliminated later by changing the code inside slightly but I like it this way
+    // Read from JSON URL and convert JSON to javascript list of objects
+    // If error, use error handler to create custom questions. 
+    // If OK, refactor list to simplify and match object structure I am using
     // ===================================================================================================
     function setupQuestions() {
         let jsonQuestions = {};
@@ -251,10 +251,6 @@ $(document).ready(function () {
         // Computers - https://opentdb.com/api.php?amount=10&category=18&difficulty=medium&type=multiple
         // General - https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple
 
-        // Get the qeuestions and refactor to our more simple object array of questions
-        // force error
-        requestURL = "https://opentdb.com/api.php?amou"
-
         HttpClientAsync(requestURL, function (response) {
             jsonQuestions = JSON.parse(response);
 
@@ -262,37 +258,49 @@ $(document).ready(function () {
             if (jsonQuestions.response_code != 0) {
                 errorHandler(jsonQuestions.response_code);
                 return;
+            } else {
+                refactorQuestions(jsonQuestions);
             }
-
-            jsonQuestions = JSON.parse(response);
-            myQuestions.length = 0;
-            myQuestions = [];
-            for (let i in jsonQuestions.results) {
-                myQuestions[i] = {}; // Initiailize array value as empty object
-                let currentQuestion = {}; // convenience temp variable for readability
-
-                currentQuestion.question = jsonQuestions.results[i].question;
-                currentQuestion.answers = [jsonQuestions.results[i].correct_answer].concat(jsonQuestions.results[i].incorrect_answers);
-
-                currentQuestion.correctAnswer = jsonQuestions.results[i].correct_answer;
-                currentQuestion.correctAnswerIdx = 0;
-                currentQuestion.correctImage = "";
-
-                myQuestions[i] = currentQuestion;
-            }
-
-            // Add my custom question to front of array for testing
-            //myQuestions.unshift(customQuestion);
-
             // Start game by asking a question - note this is async so dont ask until the response comes back
             askAQuestion();
         });
+    }
+
+    // Refactor external object structure list of questions since format is not exactly what I want
+    // for exmaple, the possible answers need to include the correct and incorrect answers
+    // this step can be eliminated later by changing the code inside slightly but I like it this way
+    // ===========================================================================================
+    function refactorQuestions(jsonQuestions) {
+        myQuestions.length = 0;
+        myQuestions = [];
+        for (let i in jsonQuestions.results) {
+            myQuestions[i] = {}; // Initiailize array value as empty object
+            let currentQuestion = {}; // convenience temp variable for readability
+
+            currentQuestion.question = jsonQuestions.results[i].question;
+            currentQuestion.answers = [jsonQuestions.results[i].correct_answer].concat(jsonQuestions.results[i].incorrect_answers);
+
+            currentQuestion.correctAnswer = jsonQuestions.results[i].correct_answer;
+            currentQuestion.correctAnswerIdx = 0;
+            currentQuestion.correctImage = "";
+
+            myQuestions[i] = currentQuestion;
+        }
     }
 
     // Handle errors from http request
     // TODO - populate with some hard coded questions
     function errorHandler(error) {
         alert(`failed to get questions, error is: ${error}`);
+
+        myQuestions = [{
+            question: "Who was the 41st President?",
+            answers: ["George HW Bush", "George W Bush", "Bill Clinton", "Gerald Ford"],
+            correctAnswer: "George HW Bush",
+            correctAnswerIdx: 0,
+            correctImage: ""
+        }];
+
     }
 
     /****************************************************************************************
