@@ -60,7 +60,6 @@ $(document).ready(function () {
 
     // Helper function to shuffle an array 
     // I may or may not use this but I like the code here for reference
-    // I am very keen on the new ES6 syntac for swapping array items in use below
     function shuffle(arr) {
         // go from last to first element
         for (let i = arr.length - 1; i > 0; i--) {
@@ -77,8 +76,10 @@ $(document).ready(function () {
         return arr;
     }
 
+    // Move correct answer - I am using this vs shuffle for now
     // Move the correct answer in the array so it isnt always in the same position
-    // This does not suffle the wole answer array just randomly assigns where the answer appears in the array
+    // This does not suffle the entire answer array 
+    // it is more efficient to just randomly assign where the answer appears in the array
     function moveCorrectAnswer(currentCorrectAnswerIdx, arr) {
         // Using index so I dont have to compare strings with funky characters
         const randomAnswerIdx = Math.floor(Math.random() * myQuestions[currentQuestionIdx].answers.length);
@@ -116,7 +117,6 @@ $(document).ready(function () {
     }
 
     // Get next question ready to display in a certain amount of time
-    // NOTE: When dealing with timers like intervals and timeouts, its is nice to have a "parent" function
     function setupNextQuestion() {
         // Clear the previous question
         currentQuestion.empty();
@@ -146,19 +146,19 @@ $(document).ready(function () {
     }
 
     // After answer is given, check to see if user was correct
-    // NOTE: The correct answer is the index of the correct answer in the array vs the text of the answer
-    // It makes it easier to check for correct answer when escaped or unicode characters are mixed in (e.g. &#39;)
+    // NOTE: The answerIdx is the index of the correct answer in the array vs the text of the answer
+    // It makes it easier to check for correct answer vs comparing strings with codes in them
     function checkAnswer(answerIdx) {
         let myAnswerIndex = parseInt(answerIdx, 10);
         let correctAnswerIndex = myQuestions[currentQuestionIdx].correctAnswerIdx;
 
         if (myAnswerIndex === correctAnswerIndex) {
             totalCorrectScore += 1;
-            displayLastResult(myQuestions[currentQuestionIdx].answers[myAnswerIndex], "Correct!");
+            lastResultRender(myQuestions[currentQuestionIdx].answers[myAnswerIndex], "Correct!");
             alert(`${myQuestions[currentQuestionIdx].answers[correctAnswerIndex]} is Correct!`);
         } else {
             totalIncorrectScore += 1;
-            displayLastResult(myQuestions[currentQuestionIdx].answers[myAnswerIndex], "Wrong!");
+            lastResultRender(myQuestions[currentQuestionIdx].answers[myAnswerIndex], "Wrong!");
             alert(`Wrong! Correct answer is: ${myQuestions[currentQuestionIdx].answers[correctAnswerIndex]}`);
         }
 
@@ -171,7 +171,7 @@ $(document).ready(function () {
     function didntAnswerOnTime() {
         totalIncorrectScore += 1;
 
-        displayLastResult("No Answer - timeout", "Wrong!");
+        lastResultRender("No Answer - timeout", "Wrong!");
         alert("Ran out of time, sorry, you lose");
 
         // Queue Up Next Question
@@ -179,7 +179,7 @@ $(document).ready(function () {
     }
 
     // Display the previous question, asnwer and result
-    function displayLastResult(lastAnswerText, lastResultText) {
+    function lastResultRender(lastAnswerText, lastResultText) {
 
         lastQuestion.html(myQuestions[currentQuestionIdx].question);
         lastCorrectAnswer.html(myQuestions[currentQuestionIdx].correctAnswer);
@@ -198,7 +198,7 @@ $(document).ready(function () {
         let messageResults = `Game Over. Correct Answers: ${correct}. Incorrect: ${incorrect}.  Total: ${total}`;
 
         if (confirm(`${messageResults} -- would you like to play again?`)) {
-            newGame();
+            startNewGame();
         } else {
             currentQuestion.html(messageResults);
             possibleAnswers.empty();
@@ -206,7 +206,7 @@ $(document).ready(function () {
     }
 
     // If the user wants to, start a new game
-    function newGame() {
+    function startNewGame() {
         totalCorrectScore = 0; // Total correct answers for the game
         totalIncorrectScore = 0; // Total correct answers for the game
         // Set current question undefined so we know to *start* at the first question (item[0])
@@ -214,7 +214,7 @@ $(document).ready(function () {
         askAQuestion();
     }
 
-    // Aak the next question and set a timer so the must answer in a certain amount of time
+    // Ask the next question and set a timer so the must answer in a certain amount of time
     // If they dont answer within the timer, they get it wrong by default
     function askAQuestion() {
         displayNextQuestion();
@@ -246,12 +246,23 @@ $(document).ready(function () {
     // ===================================================================================================
     function setupQuestions() {
         let jsonQuestions = {};
-
+        let requestURL = 'https://opentdb.com/api.php?amount=10&category=18&type=multiple';
         // PUBLIC DOMAIN API TO GET QUESTIONS e.g.:
         // Computers - https://opentdb.com/api.php?amount=10&category=18&difficulty=medium&type=multiple
         // General - https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple
 
-        HttpClientAsync('https://opentdb.com/api.php?amount=10&category=18&type=multiple', function (response) {
+        // Get the qeuestions and refactor to our more simple object array of questions
+        // force error
+        requestURL = "https://opentdb.com/api.php?amou"
+
+        HttpClientAsync(requestURL, function (response) {
+            jsonQuestions = JSON.parse(response);
+
+            // if error, handle it
+            if (jsonQuestions.response_code != 0) {
+                errorHandler(jsonQuestions.response_code);
+                return;
+            }
 
             jsonQuestions = JSON.parse(response);
             myQuestions.length = 0;
@@ -276,6 +287,12 @@ $(document).ready(function () {
             // Start game by asking a question - note this is async so dont ask until the response comes back
             askAQuestion();
         });
+    }
+
+    // Handle errors from http request
+    // TODO - populate with some hard coded questions
+    function errorHandler(error) {
+        alert(`failed to get questions, error is: ${error}`);
     }
 
     /****************************************************************************************
