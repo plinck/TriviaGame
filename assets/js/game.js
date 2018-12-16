@@ -45,7 +45,7 @@ $(document).ready(function () {
     let totalIncorrectScore = 0; // Total correct answers for the user
     let currentQuestionIdx; // the index of question being asking
 
-    // Array of Question Objects - move this to JSON File
+    // Array of Question Objects
     // ===============================================================
     let myQuestions = [];
 
