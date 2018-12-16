@@ -12,7 +12,7 @@
 
 $(document).ready(function () {
 
-    // HTML Elements for display
+    // HTML Elements for display/render
     // ====================================================
     let timeRemaining = $("#timeRemaining");
     let nextQuestionIn = $("#nextQuestionIn");
@@ -48,15 +48,6 @@ $(document).ready(function () {
     // Array of Question Objects - move this to JSON File
     // ===============================================================
     let myQuestions = [];
-
-    // Custom question to make testing easier
-    let customQuestion = {
-        question: "Who was the 41st President?",
-        answers: ["George W Bush", "Bill Clinton", "George HW Bush", "Gerald Ford"],
-        correctAnswer: "George HW Bush",
-        correctAnswerIdx: 2,
-        correctImage: ""
-    };
 
     // Helper function to shuffle an array 
     // I may or may not use this but I like the code here for reference
@@ -94,7 +85,7 @@ $(document).ready(function () {
     }
 
     // Display the next question in the list - wrap around if no more
-    function displayNextQuestion() {
+    function nextQuestionRender() {
         if (currentQuestionIdx == undefined) {
             currentQuestionIdx = 0;
         } else {
@@ -105,7 +96,7 @@ $(document).ready(function () {
     }
 
     // Display the answer choices for the current question
-    function displayAnswerChoices() {
+    function answerChoicesRender() {
         possibleAnswers.empty();
 
         // Move correct answer in list so its not always in same spot
@@ -217,8 +208,8 @@ $(document).ready(function () {
     // Ask the next question and set a timer so the must answer in a certain amount of time
     // If they dont answer within the timer, they get it wrong by default
     function askAQuestion() {
-        displayNextQuestion();
-        displayAnswerChoices();
+        nextQuestionRender();
+        answerChoicesRender();
 
         answerCountdown = answerTimeout; // Number of intervals to timeout (in this case, in seconds)
 
@@ -257,7 +248,6 @@ $(document).ready(function () {
             // if error, handle it
             if (jsonQuestions.response_code != 0) {
                 errorHandler(jsonQuestions.response_code);
-                return;
             } else {
                 refactorQuestions(jsonQuestions);
             }
@@ -289,18 +279,87 @@ $(document).ready(function () {
     }
 
     // Handle errors from http request
-    // TODO - populate with some hard coded questions
+    // Populate with some hard coded questions
     function errorHandler(error) {
-        alert(`failed to get questions, error is: ${error}`);
+        console.log(`failed to get questions, error is: ${error}.  Building backup set of questions`);
 
         myQuestions = [{
-            question: "Who was the 41st President?",
-            answers: ["George HW Bush", "George W Bush", "Bill Clinton", "Gerald Ford"],
-            correctAnswer: "George HW Bush",
-            correctAnswerIdx: 0,
-            correctImage: ""
-        }];
+                question: "Who was the 41st President?",
+                answers: ["George HW Bush", "George W Bush", "Bill Clinton", "Gerald Ford"],
+                correctAnswer: "George HW Bush",
+                correctAnswerIdx: 0,
+                correctImage: ""
+            },
+            {
+                question: "What is the real name of 'moot', founder of the imageboard 4chan?",
+                correctAnswer: "Christopher Poole",
+                answers: ["Christopher Poole", "Mark Zuckerberg", "Allison Harvard", "Catie Wayne"],
+                correctAnswerIdx: 0,
+                correctImage: ""
+            }, {
+                question: "What is the most preferred image format used for logos in the Wikimedia database?",
+                correctAnswer: ".svg",
+                answers: [".svg", ".png", ".jpeg", ".gif"],
+                correctAnswerIdx: 0,
+                correctImage: ""
+            }, {
+                question: "What is the primary addictive substance found in tobacco?",
+                correctAnswer: "Nicotine",
+                answers: ["Nicotine", "Cathinone", "Ephedrine", "Glaucine"],
+                correctAnswerIdx: 0,
+                correctImage: ""
 
+            }, {
+                question: "What is the Spanish word for &quot;donkey&quot;?",
+                correctAnswer: "Burro",
+                answers: ["Burro", "Caballo", "Toro", "Perro"],
+                correctAnswerIdx: 0,
+                correctImage: ""
+
+            }, {
+                question: "What is Grumpy Cat&#039;s real name?",
+                correctAnswer: "Burro",
+                answers: ["Burro", "Sauce", "Minnie", "Broccoli"],
+                correctAnswerIdx: 0,
+                correctImage: ""
+
+            }, {
+                question: "The book &quot;The Little Prince&quot; was written by...",
+                correctAnswer: "Antoine de Saint-Exup&eacute;ry",
+                answers: ["Antoine de Saint-Exup&eacute;ry", "Miguel de Cervantes Saavedra", "Jane Austen", "F. Scott Fitzgerald"],
+                correctAnswerIdx: 0,
+                correctImage: ""
+
+            }, {
+                question: "3 members of 2 Live Crew were arrested for playing songs from their album, As Nasty As They Wanna Be, live.",
+                correctAnswer: "True",
+                answers: ["True", "False"],
+                correctAnswerIdx: 0,
+                correctImage: ""
+
+            }, {
+                question: "Who was the leader of the Communist Party of Yugoslavia ?",
+                correctAnswer: "Josip Broz Tito",
+                answers: ["Josip Broz Tito", "Karadjordje Petrovic", "Milos Obilic", "Aleskandar Petrovic"],
+                correctAnswerIdx: 0,
+                correctImage: ""
+
+            }, {
+                question: "Which of these people was NOT a founder of Apple Inc?",
+                correctAnswer: "Jonathan Ive",
+                answers: ["Jonathan Ive", "Steve Jobs", "Ronald Wayne", "Steve Wozniak"],
+                correctAnswerIdx: 0,
+                correctImage: ""
+
+            }, {
+                question: "Alan Reed is known for providing the voice of which character?",
+                correctAnswer: "Fred Flintstone",
+                answers: ["Fred Flintstone", "Bugs Bunny", "Fangface", "G.I. Joe"],
+                correctAnswerIdx: 0,
+                correctImage: ""
+
+            }
+        ];
     }
 
     /****************************************************************************************
