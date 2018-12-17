@@ -14,28 +14,27 @@ $(document).ready(function () {
 
     // HTML Elements for display/render
     // ====================================================
-    let timeRemaining = $("#timeRemaining");
-    let nextQuestionIn = $("#nextQuestionIn");
+    let timeRemainingTag = $("#timeRemaining");
 
-    let currentQuestion = $("#currentQuestion");
-    let possibleAnswers = $("#possibleAnswers");
+    let currentQuestionTag = $("#currentQuestion");
+    let possibleAnswersTag = $("#possibleAnswers");
 
-    let lastQuestion = $("#lastQuestion");
-    let lastCorrectAnswer = $("#lastCorrectAnswer");
-    let lastAnswer = $("#lastAnswer");
-    let lastResult = $("#lastResult");
+    let lastQuestionTag = $("#lastQuestion");
+    let lastCorrectAnswerTag = $("#lastCorrectAnswer");
+    let lastAnswerTag = $("#lastAnswer");
+    let lastResultTag = $("#lastResult");
 
-    let totalCorrectAnswers = $("#totalCorrectAnswers");
-    let totalIncorrectAnswers = $("#totalIncorrectAnswers");
+    let totalCorrectAnswersTag = $("#totalCorrectAnswers");
+    let totalIncorrectAnswersTag = $("#totalIncorrectAnswers");
 
     // Timers and counters
     // =============================================================================
     const nextQuestionTimeoutTime = 2000; // Amount of time to display next question
-    let nextQuestionTimeoutTimer; // imer variable to allow cancelling timer
+    let nextQuestionTimeoutTimer; // Timer variable to allow cancelling timer
     let nextQuestionCountdown; // Countdown to next Question
 
     const answerIntervalTimeout = 1000; // Amount of time between each interval in milliseconds (so 1 second)
-    const answerTimeout = 10; // How many intervals before expiring
+    const answerTimeout = 10; // How many intervals before expiring, so 10s
     let answerIntervalTimer; // answerIntervalTimer variable to allow cancelling timer
     let answerCountdown; // to show how much left
 
@@ -92,26 +91,26 @@ $(document).ready(function () {
             currentQuestionIdx++;
         }
 
-        currentQuestion.html(myQuestions[currentQuestionIdx].question);
+        currentQuestionTag.html(myQuestions[currentQuestionIdx].question);
     }
 
     // Display the answer choices for the current question
     function answerChoicesRender() {
-        possibleAnswers.empty();
+        possibleAnswersTag.empty();
 
         // Move correct answer in list so its not always in same spot
         let shuffledArray = moveCorrectAnswer(myQuestions[currentQuestionIdx].correctAnswerIdx, myQuestions[currentQuestionIdx].answers);
         for (var i in shuffledArray) {
             var btnChoice = $(`<div class="answer-btn" data-value="${i}">${shuffledArray[i]}</div>`);
-            possibleAnswers.append(btnChoice);
+            possibleAnswersTag.append(btnChoice);
         }
     }
 
     // Get next question ready to display in a certain amount of time
     function setupNextQuestion() {
         // Clear the previous question
-        currentQuestion.empty();
-        possibleAnswers.html("Waiting for next question ...");
+        currentQuestionTag.empty();
+        possibleAnswersTag.html("Waiting for next question ...");
 
         // The end
         if (currentQuestionIdx >= (myQuestions.length - 1)) {
@@ -128,7 +127,7 @@ $(document).ready(function () {
 
         answerCountdown -= 1;
 
-        timeRemaining.html(answerCountdown);
+        timeRemainingTag.html(answerCountdown);
 
         if (answerCountdown <= 0) {
             clearInterval(answerIntervalTimer);
@@ -136,7 +135,7 @@ $(document).ready(function () {
         }
     }
 
-    // After answer is given, check to see if user was correct
+    // After answer is given, check to see if it was correct
     // NOTE: The answerIdx is the index of the correct answer in the array vs the text of the answer
     // It makes it easier to check for correct answer vs comparing strings with codes in them
     function checkAnswer(answerIdx) {
@@ -172,13 +171,13 @@ $(document).ready(function () {
     // Display the previous question, asnwer and result
     function lastResultRender(lastAnswerText, lastResultText) {
 
-        lastQuestion.html(myQuestions[currentQuestionIdx].question);
-        lastCorrectAnswer.html(myQuestions[currentQuestionIdx].correctAnswer);
-        lastAnswer.html(lastAnswerText);
-        lastResult.html(lastResultText);
+        lastQuestionTag.html(myQuestions[currentQuestionIdx].question);
+        lastCorrectAnswerTag.html(myQuestions[currentQuestionIdx].correctAnswer);
+        lastAnswerTag.html(lastAnswerText);
+        lastResultTag.html(lastResultText);
 
-        totalCorrectAnswers.html(totalCorrectScore);
-        totalIncorrectAnswers.html(totalIncorrectScore);
+        totalCorrectAnswersTag.html(totalCorrectScore);
+        totalIncorrectAnswersTag.html(totalIncorrectScore);
     }
 
     // End the game - display totals
@@ -191,8 +190,8 @@ $(document).ready(function () {
         if (confirm(`${messageResults} -- would you like to play again?`)) {
             startNewGame();
         } else {
-            currentQuestion.html(messageResults);
-            possibleAnswers.empty();
+            currentQuestionTag.html(messageResults);
+            possibleAnswersTag.empty();
         }
     }
 
@@ -213,7 +212,7 @@ $(document).ready(function () {
 
         answerCountdown = answerTimeout; // Number of intervals to timeout (in this case, in seconds)
 
-        timeRemaining.html(answerCountdown);
+        timeRemainingTag.html(answerCountdown);
 
         answerIntervalTimer = setInterval(decrementAnswerCountown, answerIntervalTimeout);
     }
