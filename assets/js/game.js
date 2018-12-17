@@ -236,7 +236,7 @@ $(document).ready(function () {
     // ===================================================================================================
     function setupQuestions() {
         let jsonQuestions = {};
-        let requestURL = 'https://opentdb.com/api.php?amount=10&category=18&type=multiple';
+        let requestURL = 'https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple';
         // PUBLIC DOMAIN API TO GET QUESTIONS e.g.:
         // Computers - https://opentdb.com/api.php?amount=10&category=18&difficulty=medium&type=multiple
         // General - https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple
