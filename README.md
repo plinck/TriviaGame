@@ -27,11 +27,10 @@ I added a portfolio item to both my responsive and bootstrap portfolio.  Both of
 ## Bugs, known issues and TODOs
 
 * Make it look a little better - Colors and Design
-* Refactor some
 
 ### Notes
 
-* I am attempting to use a functional programming approach in this assigment, although I much prefer an object oriented design and programming approach.  JavaScript does not really lend itself to good OO design and programming in the pure sense like OO languages do (C++, #, Swift, Objective-C).
+* I am using a functional programming approach in this assigment, although I much prefer an object oriented design and programming approach.  JavaScript does not really lend itself to good OO design and programming in the pure sense like OO languages e.g. C++, #, Swift, Objective-C.
 * I swapped comparing answer strings to the correct index of the answer in the array to make it fool proof to unicode and weird character oddities
 
 - - -

@@ -1,37 +1,20 @@
 /* **********************************************************************************
- * Main Program - game
- * main is the "view controller" that interacts with web page which is the view
+ * Trivia Game
  ********************************************************************************** */
-// I put strict in .jshintrc settings
 // Use strict to keep things sane and not crap code
 "use strict";
 /*global $:false, jQuery:false */
 /*global alert:false */
 /*global document:false */
+/*global confirm:false */
 
-
+// Wait for document to be ready
 $(document).ready(function () {
-
-    // HTML Elements for display/render
-    // ====================================================
-    let timeRemainingTag = $("#timeRemaining");
-
-    let currentQuestionTag = $("#currentQuestion");
-    let possibleAnswersTag = $("#possibleAnswers");
-
-    let lastQuestionTag = $("#lastQuestion");
-    let lastCorrectAnswerTag = $("#lastCorrectAnswer");
-    let lastAnswerTag = $("#lastAnswer");
-    let lastResultTag = $("#lastResult");
-
-    let totalCorrectAnswersTag = $("#totalCorrectAnswers");
-    let totalIncorrectAnswersTag = $("#totalIncorrectAnswers");
 
     // Timers and counters
     // =============================================================================
     const nextQuestionTimeoutTime = 2000; // Amount of time to display next question
     let nextQuestionTimeoutTimer; // Timer variable to allow cancelling timer
-    let nextQuestionCountdown; // Countdown to next Question
 
     const answerIntervalTimeout = 1000; // Amount of time between each interval in milliseconds (so 1 second)
     const answerTimeout = 10; // How many intervals before expiring, so 10s
@@ -42,45 +25,45 @@ $(document).ready(function () {
     // ==============================================================
     let totalCorrectScore = 0; // Total correct answers for the user
     let totalIncorrectScore = 0; // Total correct answers for the user
-    let currentQuestionIdx; // the index of question being asking
+    let currentQuestionIdx; // the index of current question being asking
 
-    // Array of Question Objects
+    // Array of Question / Answer Objects
     // ===============================================================
-    let myQuestions = [];
+    let userQuestions = [];
 
     // Helper function to shuffle an array 
     // I may or may not use this but I like the code here for reference
-    function shuffle(arr) {
+    function shuffle(answers) {
         // go from last to first element
-        for (let i = arr.length - 1; i > 0; i--) {
+        for (let i = answers.length - 1; i > 0; i--) {
             const randomIdx = Math.floor(Math.random() * (i + 1));
 
             // ES6 - Swap the current element with the random element
-            [arr[i], arr[randomIdx]] = [arr[randomIdx], arr[i]];
+            [answers[i], answers[randomIdx]] = [answers[randomIdx], answers[i]];
 
             // If this is the correct answer, change the index to match where it is being out
-            if (randomIdx == myQuestions[currentQuestionIdx].correctAnswerIdx) {
-                myQuestions[currentQuestionIdx].correctAnswerIdx = i;
+            if (randomIdx == userQuestions[currentQuestionIdx].correctAnswerIdx) {
+                userQuestions[currentQuestionIdx].correctAnswerIdx = i;
             }
         }
-        return arr;
+        return answers;
     }
 
     // Move correct answer - I am using this vs shuffle for now
     // Move the correct answer in the array so it isnt always in the same position
     // This does not suffle the entire answer array 
     // it is more efficient to just randomly assign where the answer appears in the array
-    function moveCorrectAnswer(currentCorrectAnswerIdx, arr) {
+    function moveCorrectAnswer(currentCorrectAnswerIdx, answers) {
         // Using index so I dont have to compare strings with funky characters
-        const randomAnswerIdx = Math.floor(Math.random() * myQuestions[currentQuestionIdx].answers.length);
+        const randomAnswerIdx = Math.floor(Math.random() * userQuestions[currentQuestionIdx].answers.length);
 
         // Swap correct answer into new place
-        [arr[randomAnswerIdx], arr[currentCorrectAnswerIdx]] = [arr[currentCorrectAnswerIdx], arr[randomAnswerIdx]];
+        [answers[randomAnswerIdx], answers[currentCorrectAnswerIdx]] = [answers[currentCorrectAnswerIdx], answers[randomAnswerIdx]];
 
         // Assign the corect answer index to the new place it was placed 
-        myQuestions[currentQuestionIdx].correctAnswerIdx = randomAnswerIdx;
+        userQuestions[currentQuestionIdx].correctAnswerIdx = randomAnswerIdx;
 
-        return arr;
+        return answers;
     }
 
     // Display the next question in the list - wrap around if no more
@@ -91,29 +74,29 @@ $(document).ready(function () {
             currentQuestionIdx++;
         }
 
-        currentQuestionTag.html(myQuestions[currentQuestionIdx].question);
+        $("#currentQuestion").html(userQuestions[currentQuestionIdx].question);
     }
 
     // Display the answer choices for the current question
     function answerChoicesRender() {
-        possibleAnswersTag.empty();
+        $("#possibleAnswers").empty();
 
         // Move correct answer in list so its not always in same spot
-        let shuffledArray = moveCorrectAnswer(myQuestions[currentQuestionIdx].correctAnswerIdx, myQuestions[currentQuestionIdx].answers);
-        for (var i in shuffledArray) {
-            var btnChoice = $(`<div class="answer-btn" data-value="${i}">${shuffledArray[i]}</div>`);
-            possibleAnswersTag.append(btnChoice);
+        let shuffledAnswers = moveCorrectAnswer(userQuestions[currentQuestionIdx].correctAnswerIdx, userQuestions[currentQuestionIdx].answers);
+        for (var i in shuffledAnswers) {
+            var btnChoice = $(`<div class="answer-btn" data-value="${i}">${shuffledAnswers[i]}</div>`);
+            $("#possibleAnswers").append(btnChoice);
         }
     }
 
     // Get next question ready to display in a certain amount of time
     function setupNextQuestion() {
         // Clear the previous question
-        currentQuestionTag.empty();
-        possibleAnswersTag.html("Waiting for next question ...");
+        $("#currentQuestion").empty();
+        $("#possibleAnswers").html("Waiting for next question ...");
 
         // The end
-        if (currentQuestionIdx >= (myQuestions.length - 1)) {
+        if (currentQuestionIdx >= (userQuestions.length - 1)) {
             endCurrentGame(totalCorrectScore, totalIncorrectScore);
         } else { // continue game
             clearTimeout(nextQuestionTimeoutTimer);
@@ -127,7 +110,7 @@ $(document).ready(function () {
 
         answerCountdown -= 1;
 
-        timeRemainingTag.html(answerCountdown);
+        $("#timeRemaining").html(answerCountdown);
 
         if (answerCountdown <= 0) {
             clearInterval(answerIntervalTimer);
@@ -140,16 +123,16 @@ $(document).ready(function () {
     // It makes it easier to check for correct answer vs comparing strings with codes in them
     function checkAnswer(answerIdx) {
         let myAnswerIndex = parseInt(answerIdx, 10);
-        let correctAnswerIndex = myQuestions[currentQuestionIdx].correctAnswerIdx;
+        let correctAnswerIndex = userQuestions[currentQuestionIdx].correctAnswerIdx;
 
         if (myAnswerIndex === correctAnswerIndex) {
             totalCorrectScore += 1;
-            lastResultRender(myQuestions[currentQuestionIdx].answers[myAnswerIndex], "Correct!");
-            alert(`${myQuestions[currentQuestionIdx].answers[correctAnswerIndex]} is Correct!`);
+            lastResultRender(userQuestions[currentQuestionIdx].answers[myAnswerIndex], "Correct!");
+            alert(`${userQuestions[currentQuestionIdx].answers[correctAnswerIndex]} is Correct!`);
         } else {
             totalIncorrectScore += 1;
-            lastResultRender(myQuestions[currentQuestionIdx].answers[myAnswerIndex], "Wrong!");
-            alert(`Wrong! Correct answer is: ${myQuestions[currentQuestionIdx].answers[correctAnswerIndex]}`);
+            lastResultRender(userQuestions[currentQuestionIdx].answers[myAnswerIndex], "Wrong!");
+            alert(`Wrong! Correct answer is: ${userQuestions[currentQuestionIdx].answers[correctAnswerIndex]}`);
         }
 
         // Queue Up Next Question
@@ -171,13 +154,13 @@ $(document).ready(function () {
     // Display the previous question, asnwer and result
     function lastResultRender(lastAnswerText, lastResultText) {
 
-        lastQuestionTag.html(myQuestions[currentQuestionIdx].question);
-        lastCorrectAnswerTag.html(myQuestions[currentQuestionIdx].correctAnswer);
-        lastAnswerTag.html(lastAnswerText);
-        lastResultTag.html(lastResultText);
+        $("#lastQuestion").html(userQuestions[currentQuestionIdx].question);
+        $("#lastCorrectAnswer").html(userQuestions[currentQuestionIdx].correctAnswer);
+        $("#lastAnswer").html(lastAnswerText);
+        $("#lastResult").html(lastResultText);
 
-        totalCorrectAnswersTag.html(totalCorrectScore);
-        totalIncorrectAnswersTag.html(totalIncorrectScore);
+        $("#totalCorrectAnswers").html(totalCorrectScore);
+        $("#totalIncorrectAnswers").html(totalIncorrectScore);
     }
 
     // End the game - display totals
@@ -190,8 +173,8 @@ $(document).ready(function () {
         if (confirm(`${messageResults} -- would you like to play again?`)) {
             startNewGame();
         } else {
-            currentQuestionTag.html(messageResults);
-            possibleAnswersTag.empty();
+            $("#currentQuestion").html(messageResults);
+            $("#possibleAnswers").empty();
         }
     }
 
@@ -212,7 +195,7 @@ $(document).ready(function () {
 
         answerCountdown = answerTimeout; // Number of intervals to timeout (in this case, in seconds)
 
-        timeRemainingTag.html(answerCountdown);
+        $("#timeRemaining").html(answerCountdown);
 
         answerIntervalTimer = setInterval(decrementAnswerCountown, answerIntervalTimeout);
     }
@@ -260,10 +243,10 @@ $(document).ready(function () {
     // this step can be eliminated later by changing the code inside slightly but I like it this way
     // ===========================================================================================
     function refactorQuestions(jsonQuestions) {
-        myQuestions.length = 0;
-        myQuestions = [];
+        userQuestions.length = 0;
+        userQuestions = [];
         for (let i in jsonQuestions.results) {
-            myQuestions[i] = {}; // Initiailize array value as empty object
+            userQuestions[i] = {}; // Initiailize array value as empty object
             let currentQuestion = {}; // convenience temp variable for readability
 
             currentQuestion.question = jsonQuestions.results[i].question;
@@ -273,7 +256,7 @@ $(document).ready(function () {
             currentQuestion.correctAnswerIdx = 0;
             currentQuestion.correctImage = "";
 
-            myQuestions[i] = currentQuestion;
+            userQuestions[i] = currentQuestion;
         }
     }
 
@@ -282,7 +265,7 @@ $(document).ready(function () {
     function errorHandler(error) {
         console.log(`failed to get questions, error is: ${error}.  Building backup set of questions`);
 
-        myQuestions = [{
+        userQuestions = [{
                 question: "Who was the 41st President?",
                 answers: ["George HW Bush", "George W Bush", "Bill Clinton", "Gerald Ford"],
                 correctAnswer: "George HW Bush",
