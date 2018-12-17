@@ -78,13 +78,11 @@ $(document).ready(function () {
     }
 
     // Display the answer choices for the current question
-    function answerChoicesRender() {
+    function answerChoicesRender(answers) {
         $("#possibleAnswers").empty();
 
-        // Move correct answer in list so its not always in same spot
-        let shuffledAnswers = moveCorrectAnswer(userQuestions[currentQuestionIdx].correctAnswerIdx, userQuestions[currentQuestionIdx].answers);
-        for (var i in shuffledAnswers) {
-            var btnChoice = $(`<div class="answer-btn" data-value="${i}">${shuffledAnswers[i]}</div>`);
+        for (var i in answers) {
+            var btnChoice = $(`<div class="answer-btn" data-value="${i}">${answers[i]}</div>`);
             $("#possibleAnswers").append(btnChoice);
         }
     }
@@ -191,7 +189,10 @@ $(document).ready(function () {
     // If they dont answer within the timer, they get it wrong by default
     function askAQuestion() {
         nextQuestionRender();
-        answerChoicesRender();
+
+        // Move the correct answer in answer list so it isnt always at index 0
+        let shuffledAnswers = moveCorrectAnswer(userQuestions[currentQuestionIdx].correctAnswerIdx, userQuestions[currentQuestionIdx].answers);
+        answerChoicesRender(shuffledAnswers);
 
         answerCountdown = answerTimeout; // Number of intervals to timeout (in this case, in seconds)
 
